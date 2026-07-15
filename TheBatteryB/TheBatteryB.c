@@ -283,5 +283,8 @@ int main()
     // For more examples of UART use see https://github.com/raspberrypi/pico-examples/tree/master/uart
 
 
-    blink(1000);
+    while (1)
+    {
+        blink(1000);
+    }
 }
