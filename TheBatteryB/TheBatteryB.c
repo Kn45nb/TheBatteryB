@@ -52,7 +52,7 @@ Defines     Var                             Val             Mô tả
 #define     I2C_PORT_0                      i2c0
 #define     I2C_SDA_0                       8
 #define     I2C_SCL_0                       9
-#define     I2C_SLAVE_ADDR                  0xB            // SMBus Host Slave Interface: 0x8, Smart Battery Charger/Charger Selector or Charger System Manager: 0x9, Smart Battery System Manager or Smart Battery Selector: 0xA, Smart Battery: 0xB
+// #define     I2C_SLAVE_ADDR                  0xB            // SMBus Host Slave Interface: 0x8, Smart Battery Charger/Charger Selector or Charger System Manager: 0x9, Smart Battery System Manager or Smart Battery Selector: 0xA, Smart Battery: 0xB
 
 // I2C_1 defines
 #define     I2C_PORT_1                      i2c1
@@ -254,10 +254,6 @@ int main()
 
     // https://github.com/raspberrypi/pico-examples/tree/master/i2c
 
-    
-    
-    
-    
         // // SPI initialisation
     // spi_init(SPI_PORT, 1000*1000);                  // 1MHz
     // gpio_set_function(PIN_MISO, GPIO_FUNC_SPI);
