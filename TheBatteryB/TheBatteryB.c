@@ -50,14 +50,14 @@ Defines     Var                             Val             Mô tả
 
 // I2C_0 defines
 #define     I2C_PORT_0                      i2c0
-#define     I2C_SDA                         8
-#define     I2C_SCL                         9
+#define     I2C_SDA_0                       8
+#define     I2C_SCL_0                       9
 #define     I2C_SLAVE_ADDR                  0xB            // SMBus Host Slave Interface: 0x8, Smart Battery Charger/Charger Selector or Charger System Manager: 0x9, Smart Battery System Manager or Smart Battery Selector: 0xA, Smart Battery: 0xB
 
 // I2C_1 defines
 #define     I2C_PORT_1                      i2c1
-#define     I2C_SDA                         12
-#define     I2C_SCL                         13
+#define     I2C_SDA_1                       12
+#define     I2C_SCL_1                       13
 
 
 
@@ -245,10 +245,10 @@ int main()
     }
 
     i2c_init(I2C_PORT_0, 100*1000);
-    gpio_set_function(I2C_SDA, GPIO_FUNC_I2C);
-    gpio_set_function(I2C_SCL, GPIO_FUNC_I2C);
-    gpio_pull_up(I2C_SDA);
-    gpio_pull_up(I2C_SCL);
+    gpio_set_function(I2C_SDA_0, GPIO_FUNC_I2C);
+    gpio_set_function(I2C_SCL_0, GPIO_FUNC_I2C);
+    gpio_pull_up(I2C_SDA_0);
+    gpio_pull_up(I2C_SCL_0);
 
 
 
