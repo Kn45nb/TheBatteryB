@@ -8,7 +8,7 @@ TheBatteryB/
 │  └─ tasks.json
 ├─ build/
 │  ├─ CMakeFiles/
-│  │  ├─ 4.3.4/
+│  │  ├─ 4.4.0/
 │  │  │  ├─ CompilerIdASM/
 │  │  │  ├─ CompilerIdC/
 │  │  │  │  ├─ CMakeCCompilerId.c
@@ -22,76 +22,159 @@ TheBatteryB/
 │  │  │  ├─ CMakeDetermineCompilerABI_C.bin
 │  │  │  ├─ CMakeDetermineCompilerABI_CXX.bin
 │  │  │  └─ CMakeSystem.cmake
-│  │  ├─ CMakeScratch/
 │  │  ├─ pkgRedirects/
 │  │  ├─ TheBatteryB.dir/
-│  │  │  └─ C_/
-│  │  │     └─ Users/
-│  │  │        └─ kn45n/
-│  │  │           └─ .pico-sdk/
-│  │  │              └─ sdk/
-│  │  │                 └─ 2.3.0/
-│  │  │                    ├─ lib/
-│  │  │                    │  └─ cyw43-driver/
-│  │  │                    │     └─ src/
-│  │  │                    └─ src/
-│  │  │                       ├─ common/
-│  │  │                       │  ├─ hardware_claim/
-│  │  │                       │  ├─ pico_sync/
-│  │  │                       │  ├─ pico_time/
-│  │  │                       │  └─ pico_util/
-│  │  │                       ├─ rp2_common/
-│  │  │                       │  ├─ hardware_boot_lock/
-│  │  │                       │  ├─ hardware_clocks/
-│  │  │                       │  ├─ hardware_divider/
-│  │  │                       │  ├─ hardware_dma/
-│  │  │                       │  ├─ hardware_exception/
-│  │  │                       │  ├─ hardware_flash/
-│  │  │                       │  ├─ hardware_gpio/
-│  │  │                       │  ├─ hardware_i2c/
-│  │  │                       │  ├─ hardware_irq/
-│  │  │                       │  ├─ hardware_pio/
-│  │  │                       │  ├─ hardware_pll/
-│  │  │                       │  ├─ hardware_rtc/
-│  │  │                       │  ├─ hardware_spi/
-│  │  │                       │  ├─ hardware_sync/
-│  │  │                       │  ├─ hardware_sync_spin_lock/
-│  │  │                       │  ├─ hardware_ticks/
-│  │  │                       │  ├─ hardware_timer/
-│  │  │                       │  ├─ hardware_uart/
-│  │  │                       │  ├─ hardware_vreg/
-│  │  │                       │  ├─ hardware_watchdog/
-│  │  │                       │  ├─ hardware_xip_cache/
-│  │  │                       │  ├─ hardware_xosc/
-│  │  │                       │  ├─ pico_async_context/
-│  │  │                       │  ├─ pico_atomic/
-│  │  │                       │  ├─ pico_bit_ops/
-│  │  │                       │  ├─ pico_bootrom/
-│  │  │                       │  ├─ pico_clib_interface/
-│  │  │                       │  ├─ pico_crt0/
-│  │  │                       │  ├─ pico_cxx_options/
-│  │  │                       │  ├─ pico_cyw43_arch/
-│  │  │                       │  ├─ pico_cyw43_driver/
-│  │  │                       │  │  └─ cybt_shared_bus/
-│  │  │                       │  ├─ pico_divider/
-│  │  │                       │  ├─ pico_double/
-│  │  │                       │  ├─ pico_flash/
-│  │  │                       │  ├─ pico_float/
-│  │  │                       │  ├─ pico_int64_ops/
-│  │  │                       │  ├─ pico_malloc/
-│  │  │                       │  ├─ pico_mem_ops/
-│  │  │                       │  ├─ pico_platform_common/
-│  │  │                       │  ├─ pico_platform_panic/
-│  │  │                       │  ├─ pico_printf/
-│  │  │                       │  ├─ pico_runtime/
-│  │  │                       │  ├─ pico_runtime_init/
-│  │  │                       │  ├─ pico_standard_binary_info/
-│  │  │                       │  ├─ pico_stdio/
-│  │  │                       │  ├─ pico_stdlib/
-│  │  │                       │  ├─ pico_thread_local/
-│  │  │                       │  └─ pico_unique_id/
-│  │  │                       └─ rp2040/
-│  │  │                          └─ pico_platform/
+│  │  │  ├─ C_/
+│  │  │  │  └─ Users/
+│  │  │  │     └─ kn45n/
+│  │  │  │        └─ .pico-sdk/
+│  │  │  │           └─ sdk/
+│  │  │  │              └─ 2.3.0/
+│  │  │  │                 ├─ lib/
+│  │  │  │                 │  └─ cyw43-driver/
+│  │  │  │                 │     └─ src/
+│  │  │  │                 │        ├─ cyw43_ctrl.c.obj
+│  │  │  │                 │        ├─ cyw43_ll.c.obj
+│  │  │  │                 │        ├─ cyw43_lwip.c.obj
+│  │  │  │                 │        └─ cyw43_stats.c.obj
+│  │  │  │                 └─ src/
+│  │  │  │                    ├─ common/
+│  │  │  │                    │  ├─ hardware_claim/
+│  │  │  │                    │  │  └─ claim.c.obj
+│  │  │  │                    │  ├─ pico_sync/
+│  │  │  │                    │  │  ├─ critical_section.c.obj
+│  │  │  │                    │  │  ├─ lock_core.c.obj
+│  │  │  │                    │  │  ├─ mutex.c.obj
+│  │  │  │                    │  │  └─ sem.c.obj
+│  │  │  │                    │  ├─ pico_time/
+│  │  │  │                    │  │  ├─ time.c.obj
+│  │  │  │                    │  │  └─ timeout_helper.c.obj
+│  │  │  │                    │  └─ pico_util/
+│  │  │  │                    │     ├─ datetime.c.obj
+│  │  │  │                    │     ├─ fixed_bitset.c.obj
+│  │  │  │                    │     ├─ pheap.c.obj
+│  │  │  │                    │     └─ queue.c.obj
+│  │  │  │                    ├─ rp2_common/
+│  │  │  │                    │  ├─ hardware_boot_lock/
+│  │  │  │                    │  │  └─ boot_lock.c.obj
+│  │  │  │                    │  ├─ hardware_clocks/
+│  │  │  │                    │  │  └─ clocks.c.obj
+│  │  │  │                    │  ├─ hardware_divider/
+│  │  │  │                    │  │  └─ divider.S.obj
+│  │  │  │                    │  ├─ hardware_dma/
+│  │  │  │                    │  │  └─ dma.c.obj
+│  │  │  │                    │  ├─ hardware_exception/
+│  │  │  │                    │  │  └─ exception.c.obj
+│  │  │  │                    │  ├─ hardware_flash/
+│  │  │  │                    │  │  └─ flash.c.obj
+│  │  │  │                    │  ├─ hardware_gpio/
+│  │  │  │                    │  │  └─ gpio.c.obj
+│  │  │  │                    │  ├─ hardware_i2c/
+│  │  │  │                    │  │  └─ i2c.c.obj
+│  │  │  │                    │  ├─ hardware_irq/
+│  │  │  │                    │  │  ├─ irq_handler_chain.S.obj
+│  │  │  │                    │  │  └─ irq.c.obj
+│  │  │  │                    │  ├─ hardware_pio/
+│  │  │  │                    │  │  └─ pio.c.obj
+│  │  │  │                    │  ├─ hardware_pll/
+│  │  │  │                    │  │  └─ pll.c.obj
+│  │  │  │                    │  ├─ hardware_rtc/
+│  │  │  │                    │  │  └─ rtc.c.obj
+│  │  │  │                    │  ├─ hardware_spi/
+│  │  │  │                    │  │  └─ spi.c.obj
+│  │  │  │                    │  ├─ hardware_sync/
+│  │  │  │                    │  │  └─ sync.c.obj
+│  │  │  │                    │  ├─ hardware_sync_spin_lock/
+│  │  │  │                    │  │  └─ sync_spin_lock.c.obj
+│  │  │  │                    │  ├─ hardware_ticks/
+│  │  │  │                    │  │  └─ ticks.c.obj
+│  │  │  │                    │  ├─ hardware_timer/
+│  │  │  │                    │  │  └─ timer.c.obj
+│  │  │  │                    │  ├─ hardware_uart/
+│  │  │  │                    │  │  └─ uart.c.obj
+│  │  │  │                    │  ├─ hardware_vreg/
+│  │  │  │                    │  │  └─ vreg.c.obj
+│  │  │  │                    │  ├─ hardware_watchdog/
+│  │  │  │                    │  │  └─ watchdog.c.obj
+│  │  │  │                    │  ├─ hardware_xip_cache/
+│  │  │  │                    │  │  └─ xip_cache.c.obj
+│  │  │  │                    │  ├─ hardware_xosc/
+│  │  │  │                    │  │  └─ xosc.c.obj
+│  │  │  │                    │  ├─ pico_async_context/
+│  │  │  │                    │  │  ├─ async_context_base.c.obj
+│  │  │  │                    │  │  └─ async_context_threadsafe_background.c.obj
+│  │  │  │                    │  ├─ pico_atomic/
+│  │  │  │                    │  │  └─ atomic.c.obj
+│  │  │  │                    │  ├─ pico_bit_ops/
+│  │  │  │                    │  │  └─ bit_ops_aeabi.S.obj
+│  │  │  │                    │  ├─ pico_bootrom/
+│  │  │  │                    │  │  ├─ bootrom_lock.c.obj
+│  │  │  │                    │  │  └─ bootrom.c.obj
+│  │  │  │                    │  ├─ pico_clib_interface/
+│  │  │  │                    │  │  ├─ cxa_guard.c.obj
+│  │  │  │                    │  │  └─ newlib_interface.c.obj
+│  │  │  │                    │  ├─ pico_crt0/
+│  │  │  │                    │  │  └─ crt0.S.obj
+│  │  │  │                    │  ├─ pico_cxx_options/
+│  │  │  │                    │  │  └─ new_delete.cpp.obj
+│  │  │  │                    │  ├─ pico_cyw43_arch/
+│  │  │  │                    │  │  ├─ cyw43_arch_freertos.c.obj
+│  │  │  │                    │  │  ├─ cyw43_arch_poll.c.obj
+│  │  │  │                    │  │  ├─ cyw43_arch_threadsafe_background.c.obj
+│  │  │  │                    │  │  └─ cyw43_arch.c.obj
+│  │  │  │                    │  ├─ pico_cyw43_driver/
+│  │  │  │                    │  │  ├─ cybt_shared_bus/
+│  │  │  │                    │  │  │  ├─ cybt_shared_bus_driver.c.obj
+│  │  │  │                    │  │  │  └─ cybt_shared_bus.c.obj
+│  │  │  │                    │  │  ├─ cyw43_bus_pio_spi.c.obj
+│  │  │  │                    │  │  └─ cyw43_driver.c.obj
+│  │  │  │                    │  ├─ pico_divider/
+│  │  │  │                    │  │  └─ divider_hardware.S.obj
+│  │  │  │                    │  ├─ pico_double/
+│  │  │  │                    │  │  ├─ double_aeabi_rp2040.S.obj
+│  │  │  │                    │  │  ├─ double_init_rom_rp2040.c.obj
+│  │  │  │                    │  │  ├─ double_math.c.obj
+│  │  │  │                    │  │  └─ double_v1_rom_shim_rp2040.S.obj
+│  │  │  │                    │  ├─ pico_flash/
+│  │  │  │                    │  │  └─ flash.c.obj
+│  │  │  │                    │  ├─ pico_float/
+│  │  │  │                    │  │  ├─ float_aeabi_rp2040.S.obj
+│  │  │  │                    │  │  ├─ float_init_rom_rp2040.c.obj
+│  │  │  │                    │  │  ├─ float_math.c.obj
+│  │  │  │                    │  │  └─ float_v1_rom_shim_rp2040.S.obj
+│  │  │  │                    │  ├─ pico_int64_ops/
+│  │  │  │                    │  │  └─ pico_int64_ops_aeabi.S.obj
+│  │  │  │                    │  ├─ pico_malloc/
+│  │  │  │                    │  │  └─ malloc.c.obj
+│  │  │  │                    │  ├─ pico_mem_ops/
+│  │  │  │                    │  │  └─ mem_ops_aeabi.S.obj
+│  │  │  │                    │  ├─ pico_platform_common/
+│  │  │  │                    │  │  └─ common.c.obj
+│  │  │  │                    │  ├─ pico_platform_panic/
+│  │  │  │                    │  │  ├─ custom_panic_function.S.obj
+│  │  │  │                    │  │  └─ panic.c.obj
+│  │  │  │                    │  ├─ pico_printf/
+│  │  │  │                    │  │  └─ printf.c.obj
+│  │  │  │                    │  ├─ pico_runtime/
+│  │  │  │                    │  │  └─ runtime.c.obj
+│  │  │  │                    │  ├─ pico_runtime_init/
+│  │  │  │                    │  │  ├─ runtime_init_clocks.c.obj
+│  │  │  │                    │  │  ├─ runtime_init_stack_guard.c.obj
+│  │  │  │                    │  │  └─ runtime_init.c.obj
+│  │  │  │                    │  ├─ pico_standard_binary_info/
+│  │  │  │                    │  │  └─ standard_binary_info.c.obj
+│  │  │  │                    │  ├─ pico_stdio/
+│  │  │  │                    │  │  └─ stdio.c.obj
+│  │  │  │                    │  ├─ pico_stdlib/
+│  │  │  │                    │  │  └─ stdlib.c.obj
+│  │  │  │                    │  ├─ pico_thread_local/
+│  │  │  │                    │  │  └─ thread_local.c.obj
+│  │  │  │                    │  └─ pico_unique_id/
+│  │  │  │                    │     └─ unique_id.c.obj
+│  │  │  │                    └─ rp2040/
+│  │  │  │                       └─ pico_platform/
+│  │  │  │                          └─ platform.c.obj
+│  │  │  └─ TheBatteryB.c.obj
 │  │  ├─ cmake.check_cache
 │  │  ├─ CMakeConfigureLog.yaml
 │  │  ├─ InstallScripts.json
@@ -282,7 +365,8 @@ TheBatteryB/
 │  │  │  │  │  ├─ cybt_shared_bus/
 │  │  │  │  │  │  ├─ CMakeFiles/
 │  │  │  │  │  │  └─ cmake_install.cmake
-│  │  │  │  │  └─ cmake_install.cmake
+│  │  │  │  │  ├─ cmake_install.cmake
+│  │  │  │  │  └─ cyw43_bus_pio_spi.pio.h
 │  │  │  │  ├─ pico_divider/
 │  │  │  │  │  ├─ CMakeFiles/
 │  │  │  │  │  └─ cmake_install.cmake
@@ -401,7 +485,14 @@ TheBatteryB/
 │  │  │  │  ├─ boot_stage2/
 │  │  │  │  │  ├─ CMakeFiles/
 │  │  │  │  │  │  ├─ bs2_default_library.dir/
+│  │  │  │  │  │  │  └─ bs2_default_padded_checksummed.S.obj
 │  │  │  │  │  │  └─ bs2_default.dir/
+│  │  │  │  │  │     └─ compile_time_choice.S.obj
+│  │  │  │  │  ├─ bs2_default_padded_checksummed.S
+│  │  │  │  │  ├─ bs2_default.bin
+│  │  │  │  │  ├─ bs2_default.dis
+│  │  │  │  │  ├─ bs2_default.elf
+│  │  │  │  │  ├─ bs2_default.elf.map
 │  │  │  │  │  └─ cmake_install.cmake
 │  │  │  │  ├─ hardware_regs/
 │  │  │  │  │  ├─ CMakeFiles/
@@ -417,11 +508,21 @@ TheBatteryB/
 │  │  │  ├─ CMakeFiles/
 │  │  │  └─ cmake_install.cmake
 │  │  └─ cmake_install.cmake
+│  ├─ .ninja_deps
+│  ├─ .ninja_log
+│  ├─ blink.pio.h
 │  ├─ build.ninja
 │  ├─ cmake_install.cmake
 │  ├─ CMakeCache.txt
-│  └─ compile_commands.json
+│  ├─ compile_commands.json
+│  ├─ TheBatteryB.bin
+│  ├─ TheBatteryB.dis
+│  ├─ TheBatteryB.elf
+│  ├─ TheBatteryB.elf.map
+│  ├─ TheBatteryB.hex
+│  └─ TheBatteryB.uf2
 ├─ .gitignore
+├─ .map
 ├─ blink.pio
 ├─ CMakeLists.txt
 ├─ pico_sdk_import.cmake
