@@ -6,10 +6,6 @@ set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-# Initialise pico_sdk from installed location
-# (note this can come from environment, CMake cache etc)
-
-# == DO NOT EDIT THE FOLLOWING LINES for the Raspberry Pi Pico VS Code Extension to work ==
 if(WIN32)
     set(USERHOME $ENV{USERPROFILE})
 else()
@@ -22,47 +18,43 @@ set(picoVscode ${USERHOME}/.pico-sdk/cmake/pico-vscode.cmake)
 if (EXISTS ${picoVscode})
     include(${picoVscode})
 endif()
-# ====================================================================================
+
 set(PICO_BOARD pico_w CACHE STRING "Board type")
 
-# Pull in Raspberry Pi Pico SDK (must be before project)
 include(pico_sdk_import.cmake)
 
 project(TheBatteryB C CXX ASM)
 
-# Initialise the Raspberry Pi Pico SDK
 pico_sdk_init()
 
-# Add executable. Default name is the project name, version 0.1
-
-add_executable(TheBatteryB TheBatteryB.c )
+add_executable(TheBatteryB
+        TheBatteryB.c
+)
 
 pico_set_program_name(TheBatteryB "TheBatteryB")
 pico_set_program_version(TheBatteryB "0.1")
 
-# Generate PIO header
+# Nếu vẫn muốn giữ file PIO hiện tại trong tree thì cứ để dòng này.
 pico_generate_pio_header(TheBatteryB ${CMAKE_CURRENT_LIST_DIR}/blink.pio)
 
-# Modify the below lines to enable/disable output over UART/USB
+# Không dùng stdio USB vì nó chiếm USB device.
 pico_enable_stdio_uart(TheBatteryB 0)
 pico_enable_stdio_usb(TheBatteryB 0)
 
-# Add the standard library to the build
 target_link_libraries(TheBatteryB
-        pico_stdlib)
-
-# Add the standard include files to the build
-target_include_directories(TheBatteryB PRIVATE
-        ${CMAKE_CURRENT_LIST_DIR}
-)
-
-# Add any user requested libraries
-target_link_libraries(TheBatteryB 
+        pico_stdlib
+        pico_unique_id
+        tinyusb_device
+        tinyusb_board
         hardware_spi
         hardware_i2c
         hardware_pio
         pico_cyw43_arch_none
-        )
+)
+
+target_include_directories(TheBatteryB PRIVATE
+        ${CMAKE_CURRENT_LIST_DIR}
+        ${CMAKE_CURRENT_LIST_DIR}/LIB
+)
 
 pico_add_extra_outputs(TheBatteryB)
-
