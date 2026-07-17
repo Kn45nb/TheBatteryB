@@ -254,7 +254,7 @@ uint8_t const desc_hid_report[] =
     0x15, 0x00,
     0x26, 0xFF, 0x00,
     0x75, 0x08,
-    0x95, THEBATTERYB_HID_INPUT_LEN,          // 32 bytes
+    0x95, THEBATTERYB_HID_INPUT_LEN,          // sẽ theo header mới
     0x09, 0x01,
     0x81, 0x02,                               // Input (Data,Var,Abs)
 
@@ -262,7 +262,7 @@ uint8_t const desc_hid_report[] =
     0x15, 0x00,
     0x26, 0xFF, 0x00,
     0x75, 0x08,
-    0x95, THEBATTERYB_HID_CONTROL_LEN,        // 8 bytes
+    0x95, THEBATTERYB_HID_CONTROL_LEN,        // sẽ theo header mới
     0x09, 0x02,
     0xB1, 0x02,                               // Feature (Data,Var,Abs)
 
