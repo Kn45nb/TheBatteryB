@@ -13,21 +13,28 @@ CMake:		v4.4.0
 Include	Lib
 ============================================================================================================================================================================*/
 // Base
-#include	<stdio.h>
-#include	<stdint.h>
-
+#include    <stdio.h>
+#include    <stdint.h>
+#include    <stdbool.h>
+#include    <string.h>
 
 // SDK Pico
-#include	"pico/stdlib.h"
+#include    "pico/stdlib.h"
+#include    "bsp/board_api.h"
+#include    "tusb.h"
+#include    "pico/cyw43_arch.h"
+
+// Project libs
+#include    "battery_logic.h"
+#include    "battery_acpi.h"
+#include    "battery_hid.h"
+#include    "usb_descriptors.h"
 
 // SPI
 #include	"hardware/spi.h"
 
 // I2C
 #include	"hardware/i2c.h"
-
-// Wiless 
-#include	"pico/cyw43_arch.h"
 
 // UART
 #include	"hardware/uart.h"
@@ -40,6 +47,10 @@ Include	Lib
 /*============================================================================================================================================================================
 Defines     Var                             Val             Mô tả
 ============================================================================================================================================================================*/
+#define UPDATE_INTERVAL_MS                  BATTERY_UPDATE_INTERVAL_MS
+#define HID_REPORT_INTERVAL_MS              250u
+
+
 // SPI defines
 #define     SPI_PORT                        spi0
 #define     PIN_MISO                        16
@@ -52,7 +63,7 @@ Defines     Var                             Val             Mô tả
 #define     I2C_PORT_0                      i2c0
 #define     I2C_SDA_0                       8
 #define     I2C_SCL_0                       9
-// #define     I2C_SLAVE_ADDR                  0xB            // SMBus Host Slave Interface: 0x8, Smart Battery Charger/Charger Selector or Charger System Manager: 0x9, Smart Battery System Manager or Smart Battery Selector: 0xA, Smart Battery: 0xB
+
 
 // I2C_1 defines
 #define     I2C_PORT_1                      i2c1
@@ -76,7 +87,7 @@ Const   Type        Var                           Val                     Mô t�
 ============================================================================================================================================================================*/
 // Commant of Master
         uint32_t    CMD                         = 0x0;                  // Command of Master                                 // N/a          //
-
+        uint32_t    TARGET_SOC                  = 30;                   // Target SOC of Master                              // %            // !set: 0-100, @Kn45nb Cần một bộ logic i++, khởi tạo là 30 trừ dần mỗi lần time full.  
 
 // Package: _BIX
 const   uint32_t    REVISION                    = 0x0;                  // Version of the data structure _BIX               // N/a          // Basic: 0x0 (?const)
@@ -106,121 +117,36 @@ const   char        OEM_INFORMATION[]           = "MAKE BY @Kn45nb";    // Thôn
         uint32_t    BATTERY_PRESENT_RATE        = 0x1;                  // Tốc độ Sạc/xả (Điện áp giữa 2 đầu nguồn điện)    // POWER_UNIT   // !set: 0x0 || 0xFFFFFFFF, (Âm sạc, dương xả) @Kn45nb $Do that
         uint32_t    BATTEY_REMAINING_CAPACITY   = 0x1;                  // Dung lượng còn lại của pin                       // POWER_UNIT   // !set: 0x0 || 0xFFFFFFFF
         uint32_t    BATTERY_VOLTAGE             = 0x4A38;               // Điện áp hiện tại của pin                         // mV           // 
-        // Note: Có thể sử dụng các công cụ như Microsoft ASL Compiler để kiểm tra tính tuân thủ của các bảng ACPI. @Kn45nb
 
+        
 
-// Package: _BIF (old version for Legacy. Don't carefull that 🥲)
+/*============================================================================================================================================================================
+Local data
+============================================================================================================================================================================*/
+static battery_bix_t g_bix;
+static battery_bst_t g_bst;
+static battery_hid_input_report_t g_input_report;
+static battery_hid_control_report_t g_control_report;
 
-
-// Package: _BTP (Checkpoint charging using cơ chế Điểm ngắt pin. Cần dùng trong powercfg/batteryreport @Kn45nb)
-
-
-// Package: _SUN (Option: Số đơn vị khe cắm, nếu chơi thứ tự pin thì không cần @Kn45nb)
-
-
-// Package: _STA (Sau làm Funsion Shutdows PSU/PIN thì mới động tới @Kn45nb)
+static uint32_t g_last_logic_ms = 0;
+static uint32_t g_last_hid_ms = 0;
+static uint32_t g_last_led_ms = 0;
+static bool g_led_state = false;
+static uint32_t g_blink_interval_ms = 250;
 
 
 
 /*============================================================================================================================================================================
 Methor
 ============================================================================================================================================================================*/
-void _BST()
+static void battery_refresh_debug_snapshots(void)
 {
-
+    battery_build_bix(&g_bix);
+    battery_build_bst(&g_bst);
+    battery_hid_build_input_report(&g_input_report);
 }
 
 
-void _BCT()     // Trả về thời gian sạc ước tính của pin
-{
-
-}
-
-void _BIF()     //Trả về thông tin tĩnh về pin (nói cách khác, số kiểu máy, số sê-ri, điện áp thiết kế, v.v.)
-{
-
-}
-
-void _BIX()     // Trả về thông tin tĩnh mở rộng về pin (nói cách khác, số kiểu máy, số sê-ri, điện áp thiết kế, v.v.)
-{
-
-}
-
-void _BMA()     // Đặt khoảng thời gian trung bình của phép đo dung lượng pin, tính bằng mili giây
-{
-
-}
-
-void _BMC()     // Kiểm soát hiệu chuẩn và sạc
-{
-
-}
-
-void _BMD()     // Trả về thông tin pin liên quan đến hiệu chuẩn lại pin và điều khiển sạc
-{
-
-}
-
-void _BMS()     // Đặt sampthời gian đo dung lượng pin, tính bằng mili giây
-{
-
-}
-
-void _BPC()     // Trả về các biến tĩnh được liên kết với các đặc tính nguồn hệ thống trên đường dẫn của pin và cài đặt hỗ trợ ngưỡng nguồn
-{
-
-}
-
-void _BPS()     // Trả về khả năng cung cấp năng lượng của pin tại thời điểm hiện tại
-{
-
-}
-
-void _BPT()     // Phương pháp điều khiển để đặt Ngưỡng nguồn pin
-{
-
-}
-
-void _GMT()     // Trả về trạng thái pin hiện tại (nói cách khác, thông tin động về pin, chẳng hạn như pin hiện đang sạc hay xả, ước tính dung lượng pin còn lại, v.v.)
-{
-
-}
-
-void _BTH()     // Trả về trạng thái pin hiện tại (nói cách khác, thông tin động về pin, chẳng hạn như pin hiện đang sạc hay xả, ước tính dung lượng pin còn lại, v.v.)
-{
-
-}
-
-void _BTM()     // Trả về thời gian chạy ước tính của pin ở tốc độ tiêu hao trung bình hiện tại hoặc thời gian chạy ở một tốc độ cụ thể
-{
-
-}
-
-void _BTP()     // Đặt điểm Ngắt pin, điểm này tạo ra SCI khi dung lượng pin đạt đến điểm được chỉ định
-{
-
-}
-
-void _OSC()     // Khả năng vận chuyển OSPM cho pin
-{
-
-}
-
-void _PCL()     // Danh sách các con trỏ đến các đối tượng thiết bị đại diện cho các thiết bị chạy bằng pin (https://uefi.org/htmlspecs/ACPI_Spec_6_4_html/10_Power_Source_and_Power_Meter_Devices/Power_Source_and_Power_Meter_Devices.html#pcl-power-consumer-list)
-{
-
-}
-
-void _STA()     // Trả về trạng thái chung của pin (https://uefi.org/htmlspecs/ACPI_Spec_6_4_html/06_Device_Configuration/Device_Configuration.html#sta-device-status)
-{
-
-}
-
-
-
-/*============================================================================================================================================================================
-Sub-Funsion
-============================================================================================================================================================================*/
 void blink(uint16_t TIME_BLINK)
 {
     tight_loop_contents();
@@ -231,24 +157,339 @@ void blink(uint16_t TIME_BLINK)
 }
 
 
-/*============================================================================================================================================================================
-Main Funsion
-============================================================================================================================================================================*/
-int main()
+static void blink_error_forever(uint8_t code)
 {
-    stdio_init_all();
+    while (true) {
+        for (uint8_t i = 0; i < code; i++) {
+            blink(120);
+        }
+        sleep_ms(800);
+    }
+}
 
-    if (cyw43_arch_init())
+
+static void battery_send_report(void)
+{
+    if (!tud_mounted() || !tud_hid_ready()) {
+        return;
+    }
+
+    (void)tud_hid_report(THEBATTERYB_REPORT_ID_BATTERY,
+                         &g_input_report,
+                         sizeof(g_input_report));
+}
+
+
+
+static void led_task(void)
+{
+    uint32_t now = board_millis();
+    if ((now - g_last_led_ms) < g_blink_interval_ms) {
+        return;
+    }
+
+    g_last_led_ms = now;
+    g_led_state = !g_led_state;
+    cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, g_led_state ? 1 : 0);
+}
+
+
+
+
+/*============================================================================================================================================================================
+USB Descriptors
+============================================================================================================================================================================*/
+#define USB_PID   (0x4000 | _PID_MAP(CDC, 0) | _PID_MAP(MSC, 1) | _PID_MAP(HID, 2) | _PID_MAP(MIDI, 3) | _PID_MAP(VENDOR, 4))
+
+#define _PID_MAP(itf, n)  ((CFG_TUD_##itf) << (n))
+
+tusb_desc_device_t const desc_device =
+{
+    .bLength            = sizeof(tusb_desc_device_t),
+    .bDescriptorType    = TUSB_DESC_DEVICE,
+    .bcdUSB             = USB_BCD,
+    .bDeviceClass       = 0x00,
+    .bDeviceSubClass    = 0x00,
+    .bDeviceProtocol    = 0x00,
+    .bMaxPacketSize0    = CFG_TUD_ENDPOINT0_SIZE,
+
+    .idVendor           = USB_VID,
+    .idProduct          = USB_PID,
+    .bcdDevice          = 0x0100,
+
+    .iManufacturer      = 0x01,
+    .iProduct           = 0x02,
+    .iSerialNumber      = 0x03,
+
+    .bNumConfigurations = 0x01
+};
+
+uint8_t const* tud_descriptor_device_cb(void)
+{
+    return (uint8_t const*) &desc_device;
+}
+
+enum
+{
+    ITF_NUM_HID = 0,
+    ITF_NUM_TOTAL
+};
+
+#define CONFIG_TOTAL_LEN   (TUD_CONFIG_DESC_LEN + TUD_HID_DESC_LEN)
+#define EPNUM_HID          0x81
+
+/*
+ * Debug baseline HID:
+ *  - 32-byte input report
+ *  - 8-byte control feature report
+ * Host-side battery-grade descriptor can be swapped later without changing the file layout.
+ */
+uint8_t const desc_hid_report[] =
+{
+    0x06, 0x00, 0xFF,                         // Usage Page (Vendor Defined)
+    0x09, 0x01,                               // Usage (1)
+    0xA1, 0x01,                               // Collection (Application)
+
+    0x85, THEBATTERYB_REPORT_ID_BATTERY,      // Report ID 1
+    0x15, 0x00,
+    0x26, 0xFF, 0x00,
+    0x75, 0x08,
+    0x95, THEBATTERYB_HID_INPUT_LEN,          // 32 bytes
+    0x09, 0x01,
+    0x81, 0x02,                               // Input (Data,Var,Abs)
+
+    0x85, THEBATTERYB_REPORT_ID_CONTROL,      // Report ID 2
+    0x15, 0x00,
+    0x26, 0xFF, 0x00,
+    0x75, 0x08,
+    0x95, THEBATTERYB_HID_CONTROL_LEN,        // 8 bytes
+    0x09, 0x02,
+    0xB1, 0x02,                               // Feature (Data,Var,Abs)
+
+    0xC0
+};
+
+uint8_t const* tud_hid_descriptor_report_cb(uint8_t instance)
+{
+    (void)instance;
+    return desc_hid_report;
+}
+
+uint8_t const desc_configuration[] =
+{
+    TUD_CONFIG_DESCRIPTOR(1, ITF_NUM_TOTAL, 0, CONFIG_TOTAL_LEN,
+                          TUSB_DESC_CONFIG_ATT_REMOTE_WAKEUP, 100),
+
+    TUD_HID_DESCRIPTOR(ITF_NUM_HID, 0, HID_ITF_PROTOCOL_NONE,
+                       sizeof(desc_hid_report), EPNUM_HID,
+                       CFG_TUD_HID_EP_BUFSIZE, 10)
+};
+
+uint8_t const* tud_descriptor_configuration_cb(uint8_t index)
+{
+    (void)index;
+    return desc_configuration;
+}
+
+enum
+{
+    STRID_LANGID = 0,
+    STRID_MANUFACTURER,
+    STRID_PRODUCT,
+    STRID_SERIAL,
+};
+
+char const* string_desc_arr[] =
+{
+    (const char[]) { 0x09, 0x04 }, // English
+    "Kn45nb",
+    "TheBatteryB",
+    NULL
+};
+
+static uint16_t _desc_str[32 + 1];
+
+uint16_t const* tud_descriptor_string_cb(uint8_t index, uint16_t langid)
+{
+    (void)langid;
+    size_t chr_count;
+
+    switch (index)
     {
-        // printf("Wi-Fi init failed\n");
+    case STRID_LANGID:
+        memcpy(&_desc_str[1], string_desc_arr[0], 2);
+        chr_count = 1;
+        break;
+
+    case STRID_SERIAL:
+        chr_count = board_usb_get_serial(_desc_str + 1, 32);
+        break;
+
+    default:
+        if (!(index < (sizeof(string_desc_arr) / sizeof(string_desc_arr[0])))) {
+            return NULL;
+        }
+
+        {
+            const char *str = string_desc_arr[index];
+            chr_count = strlen(str);
+            size_t const max_count = sizeof(_desc_str) / sizeof(_desc_str[0]) - 1;
+            if (chr_count > max_count) {
+                chr_count = max_count;
+            }
+
+            for (size_t i = 0; i < chr_count; i++) {
+                _desc_str[1 + i] = str[i];
+            }
+        }
+        break;
+    }
+
+    _desc_str[0] = (uint16_t)((TUSB_DESC_STRING << 8) | (2 * chr_count + 2));
+    return _desc_str;
+}
+
+/*============================================================================================================================================================================
+USB HID callbacks
+============================================================================================================================================================================*/
+uint16_t tud_hid_get_report_cb(uint8_t instance,
+                               uint8_t report_id,
+                               hid_report_type_t report_type,
+                               uint8_t* buffer,
+                               uint16_t reqlen)
+{
+    (void)instance;
+    (void)reqlen;
+
+    if (report_type == HID_REPORT_TYPE_INPUT && report_id == THEBATTERYB_REPORT_ID_BATTERY) {
+        memcpy(buffer, &g_input_report, sizeof(g_input_report));
+        return (uint16_t)sizeof(g_input_report);
+    }
+
+    if (report_type == HID_REPORT_TYPE_FEATURE && report_id == THEBATTERYB_REPORT_ID_CONTROL) {
+        memcpy(buffer, &g_control_report, sizeof(g_control_report));
+        return (uint16_t)sizeof(g_control_report);
+    }
+
+    return 0;
+}
+
+void tud_hid_set_report_cb(uint8_t instance,
+                           uint8_t report_id,
+                           hid_report_type_t report_type,
+                           uint8_t const* buffer,
+                           uint16_t bufsize)
+{
+    (void)instance;
+
+    if (report_type != HID_REPORT_TYPE_FEATURE) {
+        return;
+    }
+
+    if (report_id != THEBATTERYB_REPORT_ID_CONTROL) {
+        return;
+    }
+
+    if (bufsize < sizeof(g_control_report)) {
+        return;
+    }
+
+    memcpy(&g_control_report, buffer, sizeof(g_control_report));
+    battery_hid_apply_control_report(&g_control_report);
+}
+
+/*============================================================================================================================================================================
+USB state callbacks
+============================================================================================================================================================================*/
+void tud_mount_cb(void)
+{
+    g_blink_interval_ms = 1000;
+}
+
+void tud_umount_cb(void)
+{
+    g_blink_interval_ms = 250;
+}
+
+void tud_suspend_cb(bool remote_wakeup_en)
+{
+    (void)remote_wakeup_en;
+    g_blink_interval_ms = 2500;
+}
+
+void tud_resume_cb(void)
+{
+    g_blink_interval_ms = tud_mounted() ? 1000 : 250;
+}
+
+
+
+/*============================================================================================================================================================================
+Main Function
+============================================================================================================================================================================*/
+int main(void)
+{
+     board_init();
+
+    if (cyw43_arch_init()) {
+        blink_error_forever(3);
         return -1;
     }
 
-    i2c_init(I2C_PORT_0, 100*1000);
-    gpio_set_function(I2C_SDA_0, GPIO_FUNC_I2C);
-    gpio_set_function(I2C_SCL_0, GPIO_FUNC_I2C);
-    gpio_pull_up(I2C_SDA_0);
-    gpio_pull_up(I2C_SCL_0);
+    cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, 0);
+
+    battery_logic_init_defaults();
+    battery_refresh_debug_snapshots();
+
+    const tusb_rhport_init_t rh_init =
+    {
+        .role = TUSB_ROLE_DEVICE,
+        .speed = TUD_OPT_HIGH_SPEED ? TUSB_SPEED_HIGH : TUSB_SPEED_FULL
+    };
+
+    TU_ASSERT(tud_rhport_init(BOARD_TUD_RHPORT, &rh_init));
+    board_init_after_tusb();
+
+    g_last_logic_ms = board_millis();
+    g_last_hid_ms = board_millis();
+    g_last_led_ms = board_millis();
+
+    while (1)
+    {
+        tud_task();
+
+        uint32_t now = board_millis();
+
+        if ((now - g_last_logic_ms) >= UPDATE_INTERVAL_MS) {
+            g_last_logic_ms = now;
+            battery_logic_tick(UPDATE_INTERVAL_MS);
+            battery_refresh_debug_snapshots();
+        }
+
+        if ((now - g_last_hid_ms) >= HID_REPORT_INTERVAL_MS) {
+            g_last_hid_ms = now;
+            battery_send_report();
+        }
+
+        led_task();
+    }
+
+
+
+
+    // stdio_init_all();
+
+    // if (cyw43_arch_init())
+    // {
+    //     // printf("Wi-Fi init failed\n");
+    //     return -1;
+    // }
+
+    // i2c_init(I2C_PORT_0, 100*1000);
+    // gpio_set_function(I2C_SDA_0, GPIO_FUNC_I2C);
+    // gpio_set_function(I2C_SCL_0, GPIO_FUNC_I2C);
+    // gpio_pull_up(I2C_SDA_0);
+    // gpio_pull_up(I2C_SCL_0);
 
 
 
@@ -279,8 +520,8 @@ int main()
     // For more examples of UART use see https://github.com/raspberrypi/pico-examples/tree/master/uart
 
 
-    while (1)
-    {
-        blink(1000);
-    }
+    // while (1)
+    // {
+    //     blink(1000);
+    // }
 }
