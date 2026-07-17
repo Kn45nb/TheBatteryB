@@ -1,0 +1,76 @@
+#pragma once
+
+#include <stdint.h>
+#include "battery_logic.h"
+
+typedef struct
+{
+    uint32_t REVISION;
+    uint32_t POWER_UNIT;
+    uint32_t DESIGN_CAPACITY;
+    uint32_t LAST_FULL_CHARGE_CAPACITY;
+    uint32_t BATTERY_TECHNOLOGY;
+    uint32_t DESIGN_VOLTAGE;
+    uint32_t DESIGN_CAPACITY_OF_WARNING;
+    uint32_t DESIGN_CAPACITY_OF_LOW;
+    uint32_t CAPACITY_GRANULARITY_1;
+    uint32_t CAPACITY_GRANULARITY_2;
+    uint32_t CYCLE_COUNT;
+    uint32_t MEASUREMENT_ACCURACY;
+    uint32_t MAX_SAMPLING_TIME;
+    uint32_t MIN_SAMPLING_TIME;
+    uint32_t MAX_AVERAGING_INTERVAL;
+    uint32_t MIN_AVERAGING_INTERVAL;
+    const char *MODEL_NUMBER;
+    const char *SERIAL_NUMBER;
+    const char *BATTEY_TYPE;
+    const char *OEM_INFORMATION;
+} battery_bix_t;
+
+typedef struct
+{
+    uint32_t BATTERY_STATE;
+    uint32_t BATTERY_PRESENT_RATE;
+    uint32_t BATTEY_REMAINING_CAPACITY;
+    uint32_t BATTERY_VOLTAGE;
+} battery_bst_t;
+
+static inline void battery_build_bix(battery_bix_t *out)
+{
+    if (!out) {
+        return;
+    }
+
+    out->REVISION = REVISION;
+    out->POWER_UNIT = POWER_UNIT;
+    out->DESIGN_CAPACITY = DESIGN_CAPACITY;
+    out->LAST_FULL_CHARGE_CAPACITY = LAST_FULL_CHARGE_CAPACITY;
+    out->BATTERY_TECHNOLOGY = BATTERY_TECHNOLOGY;
+    out->DESIGN_VOLTAGE = DESIGN_VOLTAGE;
+    out->DESIGN_CAPACITY_OF_WARNING = DESIGN_CAPACITY_OF_WARNING;
+    out->DESIGN_CAPACITY_OF_LOW = DESIGN_CAPACITY_OF_LOW;
+    out->CAPACITY_GRANULARITY_1 = CAPACITY_GRANULARITY_1;
+    out->CAPACITY_GRANULARITY_2 = CAPACITY_GRANULARITY_2;
+    out->CYCLE_COUNT = CYCLE_COUNT;
+    out->MEASUREMENT_ACCURACY = MEASUREMENT_ACCURACY;
+    out->MAX_SAMPLING_TIME = MAX_SAMPLING_TIME;
+    out->MIN_SAMPLING_TIME = MIN_SAMPLING_TIME;
+    out->MAX_AVERAGING_INTERVAL = MAX_AVERAGING_INTERVAL;
+    out->MIN_AVERAGING_INTERVAL = MIN_AVERAGING_INTERVAL;
+    out->MODEL_NUMBER = MODEL_NUMBER;
+    out->SERIAL_NUMBER = SERIAL_NUMBER;
+    out->BATTEY_TYPE = BATTEY_TYPE;
+    out->OEM_INFORMATION = OEM_INFORMATION;
+}
+
+static inline void battery_build_bst(battery_bst_t *out)
+{
+    if (!out) {
+        return;
+    }
+
+    out->BATTERY_STATE = BATTERY_STATE;
+    out->BATTERY_PRESENT_RATE = BATTERY_PRESENT_RATE;
+    out->BATTEY_REMAINING_CAPACITY = BATTEY_REMAINING_CAPACITY;
+    out->BATTERY_VOLTAGE = BATTERY_VOLTAGE;
+}
