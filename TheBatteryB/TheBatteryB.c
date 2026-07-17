@@ -123,16 +123,16 @@ const   char        OEM_INFORMATION[]           = "MAKE BY @Kn45nb";    // Thôn
 /*============================================================================================================================================================================
 Local data
 ============================================================================================================================================================================*/
-static battery_bix_t g_bix;
-static battery_bst_t g_bst;
-static battery_hid_input_report_t g_input_report;
-static battery_hid_control_report_t g_control_report;
+static  battery_bix_t                   g_bix;
+static  battery_bst_t                   g_bst;
+static  battery_hid_input_report_t      g_input_report;
+static  battery_hid_control_report_t    g_control_report;
 
-static uint32_t g_last_logic_ms = 0;
-static uint32_t g_last_hid_ms = 0;
-static uint32_t g_last_led_ms = 0;
-static bool g_led_state = false;
-static uint32_t g_blink_interval_ms = 250;
+static  uint32_t                        g_last_logic_ms     = 0;
+static  uint32_t                        g_last_hid_ms       = 0;
+static  uint32_t                        g_last_led_ms       = 0;
+static  bool                            g_led_state         = false;
+static  uint32_t                        g_blink_interval_ms = 250;
 
 
 
