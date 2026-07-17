@@ -3,7 +3,7 @@
 #include "tusb_option.h"
 
 #define CFG_TUSB_MCU               OPT_MCU_RP2040
-#define CFG_TUSB_OS                OPT_OS_NONE
+// #define CFG_TUSB_OS                OPT_OS_NONE           // @Kn45nb Check lỗi này sau. Nhớ ghi vào comit message.
 
 #define CFG_TUSB_RHPORT0_MODE      OPT_MODE_DEVICE
 #define BOARD_TUD_RHPORT           0
