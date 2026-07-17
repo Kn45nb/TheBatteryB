@@ -238,33 +238,133 @@ enum
 #define CONFIG_TOTAL_LEN   (TUD_CONFIG_DESC_LEN + TUD_HID_DESC_LEN)
 #define EPNUM_HID          0x81
 
-/*
- * Debug baseline HID:
- *  - 32-byte input report
- *  - 8-byte control feature report
- * Host-side battery-grade descriptor can be swapped later without changing the file layout.
- */
 uint8_t const desc_hid_report[] =
 {
-    0x06, 0x00, 0xFF,                         // Usage Page (Vendor Defined)
-    0x09, 0x01,                               // Usage (1)
-    0xA1, 0x01,                               // Collection (Application)
+    /* ============================================================
+     * Report ID 1
+     * Battery / Power summary input report
+     *
+     * Layout kept at 32 bytes to match your current battery_hid.h:
+     *   1) CMD                     -> vendor defined / debug field
+     *   2) BATTERY_STATE           -> PresentStatus bitfield
+     *   3) BATTERY_PRESENT_RATE    -> Current
+     *   4) BATTEY_REMAINING_CAPACITY
+     *   5) BATTERY_VOLTAGE
+     *   6) LAST_FULL_CHARGE_CAPACITY
+     *   7) DESIGN_CAPACITY
+     *   8) CYCLE_COUNT
+     * ============================================================ */
 
-    0x85, THEBATTERYB_REPORT_ID_BATTERY,      // Report ID 1
+    0x05, 0x84,                    // Usage Page (Power Device)
+    0x09, 0x04,                    // Usage (UPS)
+    0xA1, 0x01,                    // Collection (Application)
+
+    0x09, 0x24,                    // Usage (PowerSummary)
+    0xA1, 0x00,                    // Collection (Physical)
+
+    0x05, 0x85,                    // Usage Page (Battery System)
+    0x85, THEBATTERYB_REPORT_ID_BATTERY,
+
+    /* Field 1: CMD (debug / reserved) */
+    0x06, 0x00, 0xFF,              // Usage Page (Vendor Defined 0xFF00)
+    0x09, 0x01,                    // Usage (1)
+    0x75, 0x20,                    // Report Size (32)
+    0x95, 0x01,                    // Report Count (1)
+    0x15, 0x00,                    // Logical Minimum (0)
+    0x27, 0xFF, 0xFF, 0xFF, 0x7F,  // Logical Maximum (2147483647)
+    0x81, 0x02,                    // Input (Data,Var,Abs)
+
+    /* Field 2: BATTERY_STATE as PresentStatus bitfield */
+    0x05, 0x84,                    // Usage Page (Power Device)
+    0x09, 0x02,                    // Usage (PresentStatus)
+    0xA1, 0x02,                    // Collection (Logical)
+    0x05, 0x85,                    // Usage Page (Battery System)
+    0x09, 0xD0,                    // Usage (ACPresent)
+    0x09, 0x42,                    // Usage (BelowRemainingCapacityLimit)
+    0x09, 0x44,                    // Usage (Charging)
+    0x09, 0x45,                    // Usage (Discharging)
+    0x0B, 0x69, 0x00, 0x84, 0x00,  // Usage (ShutdownImminent)
+    0x0B, 0x65, 0x00, 0x84, 0x00,  // Usage (Overload)
+    0x0B, 0x00, 0x00, 0x84, 0x00,  // Usage (Undefined)
+    0x0B, 0x00, 0x00, 0x84, 0x00,  // Usage (Undefined)
+    0x75, 0x01,                    // Report Size (1)
+    0x95, 0x08,                    // Report Count (8)
+    0x25, 0x01,                    // Logical Maximum (1)
+    0x81, 0x02,                    // Input (Data,Var,Abs)
+    0xC0,                          // End Collection
+
+    /* Field 3: BATTERY_PRESENT_RATE (Current) */
+    0x05, 0x84,                    // Usage Page (Power Device)
+    0x09, 0x31,                    // Usage (Current)
+    0x75, 0x20,                    // Report Size (32)
+    0x95, 0x01,                    // Report Count (1)
+    0x15, 0x00,                    // Logical Minimum (0)
+    0x27, 0xFF, 0xFF, 0xFF, 0x7F,  // Logical Maximum (2147483647)
+    0x81, 0x02,                    // Input (Data,Var,Abs)
+
+    /* Field 4: BATTEY_REMAINING_CAPACITY */
+    0x05, 0x85,                    // Usage Page (Battery System)
+    0x09, 0x66,                    // Usage (RemainingCapacity)
+    0x75, 0x20,                    // Report Size (32)
+    0x95, 0x01,                    // Report Count (1)
     0x15, 0x00,
-    0x26, 0xFF, 0x00,
-    0x75, 0x08,
-    0x95, THEBATTERYB_HID_INPUT_LEN,          // sẽ theo header mới
+    0x27, 0xFF, 0xFF, 0xFF, 0x7F,
+    0x81, 0x02,
+
+    /* Field 5: BATTERY_VOLTAGE */
+    0x05, 0x84,                    // Usage Page (Power Device)
+    0x09, 0x30,                    // Usage (Voltage)
+    0x75, 0x20,                    // Report Size (32)
+    0x95, 0x01,
+    0x15, 0x00,
+    0x27, 0xFF, 0xFF, 0xFF, 0x7F,
+    0x81, 0x02,
+
+    /* Field 6: LAST_FULL_CHARGE_CAPACITY */
+    0x05, 0x85,                    // Usage Page (Battery System)
+    0x09, 0x67,                    // Usage (FullChargeCapacity)
+    0x75, 0x20,                    // Report Size (32)
+    0x95, 0x01,
+    0x15, 0x00,
+    0x27, 0xFF, 0xFF, 0xFF, 0x7F,
+    0x81, 0x02,
+
+    /* Field 7: DESIGN_CAPACITY */
+    0x09, 0x83,                    // Usage (DesignCapacity)
+    0x75, 0x20,                    // Report Size (32)
+    0x95, 0x01,
+    0x15, 0x00,
+    0x27, 0xFF, 0xFF, 0xFF, 0x7F,
+    0x81, 0x02,
+
+    /* Field 8: CYCLE_COUNT */
+    0x09, 0x6B,                    // Usage (CycleCount)
+    0x75, 0x20,                    // Report Size (32)
+    0x95, 0x01,
+    0x15, 0x00,
+    0x27, 0xFF, 0xFF, 0xFF, 0x7F,
+    0x81, 0x02,
+
+    0xC0,                          // End Collection (Physical)
+    0xC0,                          // End Collection (Application)
+
+    /* ============================================================
+     * Report ID 2
+     * Control report (kept vendor-defined so your existing callback
+     * and CMD/TARGET_SOC logic still works)
+     * ============================================================ */
+
+    0x06, 0x00, 0xFF,              // Usage Page (Vendor Defined 0xFF00)
+    0x09, 0x02,                    // Usage (2)
+    0xA1, 0x01,                    // Collection (Application)
+
+    0x85, THEBATTERYB_REPORT_ID_CONTROL,
     0x09, 0x01,
-    0x81, 0x02,                               // Input (Data,Var,Abs)
-
-    0x85, THEBATTERYB_REPORT_ID_CONTROL,      // Report ID 2
+    0x75, 0x20,                    // 32-bit CMD
+    0x95, 0x02,                    // CMD + TARGET_SOC
     0x15, 0x00,
-    0x26, 0xFF, 0x00,
-    0x75, 0x08,
-    0x95, THEBATTERYB_HID_CONTROL_LEN,        // sẽ theo header mới
-    0x09, 0x02,
-    0xB1, 0x02,                               // Feature (Data,Var,Abs)
+    0x27, 0xFF, 0xFF, 0xFF, 0x7F,
+    0xB1, 0x02,                    // Feature (Data,Var,Abs)
 
     0xC0
 };
