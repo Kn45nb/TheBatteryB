@@ -8,7 +8,7 @@ TheBatteryB/
 │  └─ tasks.json
 ├─ build/
 │  ├─ CMakeFiles/
-│  │  ├─ 4.3.4/
+│  │  ├─ 4.4.0/
 │  │  │  ├─ CompilerIdASM/
 │  │  │  ├─ CompilerIdC/
 │  │  │  │  ├─ CMakeCCompilerId.c
@@ -22,7 +22,6 @@ TheBatteryB/
 │  │  │  ├─ CMakeDetermineCompilerABI_C.bin
 │  │  │  ├─ CMakeDetermineCompilerABI_CXX.bin
 │  │  │  └─ CMakeSystem.cmake
-│  │  ├─ CMakeScratch/
 │  │  ├─ pkgRedirects/
 │  │  ├─ TheBatteryB.dir/
 │  │  │  └─ C_/
@@ -32,8 +31,29 @@ TheBatteryB/
 │  │  │              └─ sdk/
 │  │  │                 └─ 2.3.0/
 │  │  │                    ├─ lib/
-│  │  │                    │  └─ cyw43-driver/
+│  │  │                    │  ├─ cyw43-driver/
+│  │  │                    │  │  └─ src/
+│  │  │                    │  └─ tinyusb/
+│  │  │                    │     ├─ hw/
+│  │  │                    │     │  └─ bsp/
+│  │  │                    │     │     └─ rp2040/
 │  │  │                    │     └─ src/
+│  │  │                    │        ├─ class/
+│  │  │                    │        │  ├─ audio/
+│  │  │                    │        │  ├─ cdc/
+│  │  │                    │        │  ├─ dfu/
+│  │  │                    │        │  ├─ hid/
+│  │  │                    │        │  ├─ midi/
+│  │  │                    │        │  ├─ msc/
+│  │  │                    │        │  ├─ net/
+│  │  │                    │        │  ├─ usbtmc/
+│  │  │                    │        │  ├─ vendor/
+│  │  │                    │        │  └─ video/
+│  │  │                    │        ├─ common/
+│  │  │                    │        ├─ device/
+│  │  │                    │        └─ portable/
+│  │  │                    │           └─ raspberrypi/
+│  │  │                    │              └─ rp2040/
 │  │  │                    └─ src/
 │  │  │                       ├─ common/
 │  │  │                       │  ├─ hardware_claim/
@@ -75,6 +95,8 @@ TheBatteryB/
 │  │  │                       │  │  └─ cybt_shared_bus/
 │  │  │                       │  ├─ pico_divider/
 │  │  │                       │  ├─ pico_double/
+│  │  │                       │  ├─ pico_fix/
+│  │  │                       │  │  └─ rp2040_usb_device_enumeration/
 │  │  │                       │  ├─ pico_flash/
 │  │  │                       │  ├─ pico_float/
 │  │  │                       │  ├─ pico_int64_ops/
@@ -421,7 +443,15 @@ TheBatteryB/
 │  ├─ cmake_install.cmake
 │  ├─ CMakeCache.txt
 │  └─ compile_commands.json
+├─ LIB/
+│  ├─ battery_acpi.h
+│  ├─ battery_hid.h
+│  ├─ battery_logic.h
+│  ├─ project_config.h
+│  ├─ tusb_config.h
+│  └─ usb_descriptors.h
 ├─ .gitignore
+├─ .map
 ├─ blink.pio
 ├─ CMakeLists.txt
 ├─ pico_sdk_import.cmake
